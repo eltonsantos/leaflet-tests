@@ -4,7 +4,6 @@
 	<title>GeoJSON tutorial - Leaflet</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
     
     <link rel="stylesheet" href="css/jquery-ui.min.css" />
     <link rel="stylesheet" href="leaflet.css" />
@@ -176,7 +175,13 @@
 			$("#txtSearch").autocomplete({
 				source: setoresComerciais.features.map(function(d){
 					return d.properties.sco_num_sc + " - " + d.properties.sco_dsc_sa
-				})
+				}),
+				select: function(event, ui){
+					console.log(ui.item.value);
+					console.log(map.fitBounds(ui.item.value.getBounds()));
+
+
+				} 
 			});
 			
 
