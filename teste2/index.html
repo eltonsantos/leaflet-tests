@@ -174,13 +174,12 @@
 			/* BUSCAR */
 			$("#txtSearch").autocomplete({
 				source: setoresComerciais.features.map(function(d){
-					return d.properties.sco_num_sc + " - " + d.properties.sco_dsc_sa
+					return d.properties.sco_num_sc + " - " + d.properties.sco_dsc_loc
 				}),
 				select: function(event, ui){
-					console.log(ui.item.value);
-					console.log(map.fitBounds(ui.item.value.getBounds()));
-
-
+					console.log(stComerciaisLayer);
+					console.log(map.fitBounds(stComerciaisLayer.getBounds(ui.item.value)));
+					//map.fitBounds(stComerciaisLayer.getBounds(ui.item.value));
 				} 
 			});
 			
