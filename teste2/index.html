@@ -107,7 +107,11 @@
 			/** ST COMERCIAIS */
 			stComerciaisLayer = L.geoJSON(setoresComerciais, {
 				style: function (feature) {
-					return feature.properties && feature.properties.style;
+					return {
+						color: "#999",
+						fillColor: "#f90"
+						//,feature.properties && feature.properties.style
+					};
 				},
 				onEachFeature: onEachFeature,
 				pointToLayer: function (feature, latlng) {
@@ -121,6 +125,7 @@
 					});
 				}
 			}).addTo(map);
+
 
 			/** REDES ÁGUA */
 			redeAguaLayer = L.geoJSON(rede_agua, {
