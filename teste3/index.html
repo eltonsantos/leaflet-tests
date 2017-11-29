@@ -36,6 +36,14 @@
 			<input type="text" id="stSearch" class="form-control" placeholder="Buscar por Setor Comercial" /><br />
 			<input type="text" id="hiSearch" class="form-control" placeholder="Buscar por Hidrante" /><br />
 			<input type="text" id="raSearch" class="form-control" placeholder="Buscar por Rede de Água" />
+
+			<h5>
+				<b>Opacidade:</b>
+				<span id="image-opacity">0.7</span>
+				<br />
+				<input type="range" id="sldOpacity" min="0" max="1" step="0.1" value="0.7" />
+			</h5>
+
 		</div>
 		
 		<div class="col-lg-9">
@@ -94,6 +102,8 @@
 				layerStComerciais.bindPopup(popupConteudoStComerciais);
 
 				layerStComerciais.on({
+					mouseover: mouseOverFeature_st,
+					mouseout: mouseOutFeature_st,
 					click: zoomStComercial
 				});
 			}
@@ -134,23 +144,26 @@
 			stComerciaisLayer = L.geoJSON(setoresComerciais, {
 				style: function (feature) {
 					return {
-						color: "#999",
+						color: "#f90",
 						fillColor: "#f90"
 						//,feature.properties && feature.properties.style
 					};
 				},
-				onEachFeature: onEachFeature_st,
-				pointToLayer: function (feature, latlng) {
-					return L.circleMarker(latlng, {
-						radius: 8,
-						fillColor: "#ff7800",
-						color: "#000",
-						weight: 1,
-						opacity: 1,
-						fillOpacity: 0.8
-					});
-				}
+				onEachFeature: onEachFeature_st
 			}).addTo(map);
+
+			function mouseOverFeature_st(e){
+				layerStComerciais = e.target;
+				layerStComerciais.setStyle({
+					weight: 5,
+					color: "#666"
+				});
+			}
+
+			function mouseOutFeature_st(e){
+				stComerciaisLayer.resetStyle(e.target);
+				
+			}
 
 
 			/** REDES ÁGUA */
@@ -184,8 +197,6 @@
 				onEachFeature: onEachFeature_hi
 			}).addTo(map);
 			/*********************/
-
-			//console.log(typeof(hidrantesLayer));
 
 			objBasemaps = {
 				"Mapa tradicional": camadaMapa
@@ -241,7 +252,13 @@
 					map.fitBounds(featureLayer.getBounds());				
 				} 
 			});
-			
+
+			// 	OPACIDADE
+			$('#sldOpacity').on('change', function(){
+				$('#image-opacity').html(this.value);
+				//console.log(typeof(setoresComerciaisOverlay));
+				stComerciaisLayer.setStyle({ fillOpacity: this.value })	
+			});
 
 		});
 
