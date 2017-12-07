@@ -35,20 +35,25 @@
 		<div class="col-lg-3">
 
 			<select class="form-control" id="unSearch" name="unidade">
-				<option>Buscar por Unidade</option>
+				<option value="">Buscar por Unidade</option>
 			</select>
+
 			<br />
+			
 			<select class="form-control" id="locSearch" name="localidade">
-				<option>Buscar por Localidade</option>
+				<option value="">Buscar por Localidade</option>
 			</select>
+			
 			<br />
+			
 			<select class="form-control" id="numSearch" name="numsetorcomercial">
-				<option>Buscar por Nº Setor Comercial</option>
+				<option value="">Buscar por Nº Setor Comercial</option>
 			</select>
 
 			<hr />
 
-			<input type="text" id="hiSearch" class="form-control" placeholder="Buscar por Hidrante" /><br />
+			<input type="text" id="hiSearch" class="form-control" placeholder="Buscar por Hidrante" />
+			<br />
 			<input type="text" id="raSearch" class="form-control" placeholder="Buscar por Rede de Água" />
 
 			<h5>
@@ -233,34 +238,14 @@
 
 
 			/* BUSCAR */
-			$.each(setoresComerciais.features.properties, function (index, value) {
-			    $("#unSearch").append('<option value="'+value.sco_cod_un+'">'+value.sco_dsc_un+'</option>');
+			
+			$.getJSON('js/geoSetoresComerciais.js', function(feature){
+				var html_code = "";
+				html_code += '<option value="">Select '+feature.properties.sco_cod_un+'</option>';
+				
 			});
 
-			$("#unSearch").change(function () {
-			    $("#locSearch, #numSearch").find("option:gt(0)").remove();
-			    $("#locSearch").find("option:first").text("Loading...");
-			    $.getJSON(setoresComerciais.features.properties, {
-			        un_id: $(this).val()
-			    }, function (json) {
-			        $("#locSearch").find("option:first").text("");
-			        for (var i = 0; i < json.length; i++) {
-			            $("<option/>").attr("value", json[i].id).text(json[i].sco_dsc_loc).appendTo($("#locSearch"));
-			        }
-			    });
-			});
-			$("#locSearch").change(function () {
-			    $("#numSearch").find("option:gt(0)").remove();
-			    $("#numSearch").find("option:first").text("Loading...");
-			    $.getJSON(setoresComerciais.features.properties, {
-			        num_id: $(this).val()
-			    }, function (json) {
-			        $("#numSearch").find("option:first").text("");
-			        for (var i = 0; i < json.length; i++) {
-			            $("<option/>").attr("value", json[i].id).text(json[i].sco_num_sc).appendTo($("#numSearch"));
-			        }
-			    });
-			});
+
 /*
 			$("#stSearch").autocomplete({
 				source: setoresComerciais.features.map(function(d, i){
