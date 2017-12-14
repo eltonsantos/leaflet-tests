@@ -34,15 +34,11 @@
 					
 		<div class="col-lg-3">
 
-			<select class="form-control" id="unSearch" name="unidade">
-				<option value="">Buscar por Unidade</option>
-			</select>
+			<select class="form-control" id="unSearch" name="unidade"></select>
 
 			<br />
 			
-			<select class="form-control" id="locSearch" name="localidade">
-				<option value="">Buscar por Localidade</option>
-			</select>
+			<select class="form-control" id="locSearch" name="localidade"></select>
 			
 			<br />
 			
@@ -238,14 +234,160 @@
 
 
 			/* BUSCAR */
-			
-			$.getJSON('js/geoSetoresComerciais.js', function(feature){
-				var html_code = "";
-				html_code += '<option value="">Select '+feature.properties.sco_cod_un+'</option>';
+			/*
+			$.each(setoresComerciais.features, function(key, value){
+				var option = "";
+				var option += '<option value="'+key+'">'+value.properties.sco_dsc_un+'</option>';
+
+				$("#unSearch").append(option);
 				
+				//console.log(key + " : " + value.properties.sco_dsc_un);
+			});*/
+
+
+			//Agrupa Unidades
+            console.log(setoresComerciais.features[0].properties)
+            var groupsUnidade = [];
+            var uniqueUnidade = [];
+
+            setoresComerciais.features.map(function(prop) {
+                groupsUnidade.push(prop.properties.sco_dsc_un);
+            });
+            uniqueUnidade = Array.from(new Set(groupsUnidade)); // [1,2,3,4,5]
+
+            uniqueUnidade.map(function(value) {
+
+                $('#unSearch').append($('<option/>', {
+                    value: value,
+                    text: value
+                }));
+            });
+
+            //Get Localidades ao alterar
+            $('#unSearch').on('change', function() {
+                    var value = $(this).find(':selected').val();
+                    var groupsLocalidade = [];
+                    var uniqueLocalidade = [];
+
+                    setoresComerciais.features.filter(function(prop) {
+                        if (prop.properties.sco_dsc_un.toLowerCase().trim() === value.toLowerCase().trim()) {
+                            groupsLocalidade.push(prop.properties.sco_dsc_loc);
+                        }
+
+                    });
+                    console.log(groupsLocalidade)
+                    groupsLocalidade = Array.from(new Set(groupsLocalidade)); // [1,2,3,4,5]
+                    console.log('Unique: ' + groupsLocalidade)
+					
+					groupsLocalidade.sort(function(a, b){
+						return a-b;
+					});
+                    $('#locSearch').empty();
+					$('#locSearch').append('<option value="">Selecione</option>');
+                    groupsLocalidade.map(function(prop) {
+
+                        $('#locSearch').append($('<option/>', {
+                            value: prop,
+                            text: prop
+                        }));
+                    });
+                })
+                //Get Comercial 
+            $('#locSearch').on('change', function() {
+                var value = $(this).find(':selected').val();
+                var groupsSetoComercial = [];
+                var uniqueLocalidade = [];
+
+                setoresComerciais.features.filter(function(prop) {
+                    if (prop.properties.sco_dsc_loc.toLowerCase().trim() === value.toLowerCase().trim()) {
+                        groupsSetoComercial.push(prop.properties.sco_num_sc);
+                    }
+
+                });
+
+				groupsSetoComercial.sort(function(a, b){
+						return a-b;
+					});
+                $('#numSearch').sort().empty();
+				$('#numSearch').append('<option value="">Selecione</option>');
+                groupsSetoComercial.map(function(prop) {
+
+                    $('#numSearch').append($('<option/>', {
+                        value: prop,
+                        text: prop
+                    }));
+                });
+            })
+
+
+
+
+
+
+/*		
+			var propertyUn = [];
+			var propertyLoc = [];
+			var propertySt = [];
+			var groups = [];
+			var groupsLoc = [];
+			var groupsSt = [];
+			
+			$("#unSearch").html("<option>Buscar por Unidade</option>");
+			setoresComerciais.features.map(function(prop){
+				propertyUn.push(prop.properties.sco_dsc_un);
+			});
+			groups = Array.from(new Set(propertyUn));
+			groups.map(function(value){
+				$("#unSearch").append($('<option/>', {
+					value:value,
+					text:value
+				}));
+			});
+			
+
+				
+			$("#locSearch").html("<option>Buscar por Localidade</option>");
+			setoresComerciais.features.map(function(prop){
+				propertyLoc.push(prop.properties.sco_dsc_loc);
+			});
+			groupsLoc = Array.from(new Set(propertyLoc));
+			groupsLoc.map(function(value){
+				$("#locSearch").append($('<option/>', {
+					value:value,
+					text:value
+				}));
+			});		
+			
+
+
+			$("#stSearch").html("<option>Buscar por Nº de Setor Comercial</option>");
+			setoresComerciais.features.map(function(prop){
+				propertySt.push(prop.properties.sco_num_sc);
+			});
+			groupsSt = Array.from(new Set(propertySt));
+			groupsSt.map(function(value){
+				$("#stSearch").append($('<option/>', {
+					value:value,
+					text:value
+				}));
 			});
 
+*/
 
+			/*
+			function paises(setoresComerciais){
+				var option = '<option selected="selected" value="0">Buscar por Unidade</option>'
+				for(var i = 0; i < setoresComerciais.features.length; i++){
+					option += "<option value='"+setoresComerciais.features[i].properties.sco_cod_un+"'>"+setoresComerciais.features[i].properties.sco_dsc_un+"</option>";
+				}
+
+				$("#unSearch").html(option);
+			});*/
+
+			
+
+
+			
 /*
 			$("#stSearch").autocomplete({
 				source: setoresComerciais.features.map(function(d, i){
