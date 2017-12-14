@@ -34,16 +34,20 @@
 					
 		<div class="col-lg-3">
 
-			<select class="form-control" id="unSearch" name="unidade"></select>
+			<select class="form-control" id="unSearch" name="unidade">
+				<option value="">Buscar por Unidade</option>
+			</select>
 
 			<br />
 			
-			<select class="form-control" id="locSearch" name="localidade"></select>
+			<select class="form-control" id="locSearch" name="localidade">
+				<option value="">Buscar por Localidade</option>
+			</select>
 			
 			<br />
 			
 			<select class="form-control" id="numSearch" name="numsetorcomercial">
-				<option value="">Buscar por Nº Setor Comercial</option>
+				<option value="">Buscar por Nº do Setor Comercial</option>
 			</select>
 
 			<hr />
@@ -250,6 +254,7 @@
             var groupsUnidade = [];
             var uniqueUnidade = [];
 
+			//$('#unSearch').append('<option value="">Selecione</option>');
             setoresComerciais.features.map(function(prop) {
                 groupsUnidade.push(prop.properties.sco_dsc_un);
             });
@@ -283,7 +288,9 @@
 						return a-b;
 					});
                     $('#locSearch').empty();
-					$('#locSearch').append('<option value="">Selecione</option>');
+					$('#numSearch').empty();
+					$('#locSearch').append('<option value="">Buscar por Localidade</option>');
+					$('#numSearch').append('<option value="">Buscar por Nº do Setor Comercial</option>');
                     groupsLocalidade.map(function(prop) {
 
                         $('#locSearch').append($('<option/>', {
@@ -309,7 +316,7 @@
 						return a-b;
 					});
                 $('#numSearch').sort().empty();
-				$('#numSearch').append('<option value="">Selecione</option>');
+				$('#numSearch').append('<option value="">Buscar por Nº do Setor Comercial</option>');
                 groupsSetoComercial.map(function(prop) {
 
                     $('#numSearch').append($('<option/>', {
