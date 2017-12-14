@@ -75,8 +75,10 @@
     <script src="js/jquery-ui.min.js"></script>
     <script src="leaflet.js"></script>
     <script src="js/bootstrap.min.js"></script>
-	<script src="js/rede_agua.js" type="text/javascript"></script>
+	<script src="js/geoRedeAgua.js" type="text/javascript"></script>
 	<script src="js/geoHidrantes.js" type="text/javascript"></script>
+	<script src="js/geoBairros.js" type="text/javascript"></script>
+	<script src="js/geoTramacro.js" type="text/javascript"></script>
 	<script src="js/geoSetoresComerciais.js" type="text/javascript"></script>
 	<script src="js/leaflet.browser.print.min.js"></script>
 
@@ -87,15 +89,25 @@
 		var objSobrecamadas;
 		var controleCamadas;
 		var camadaMapa;
+		
 		var stComerciaisLayer;
 		var redeAguaLayer;
 		var hidrantesLayer;
+		var bairrosLayer;
+		var macrosLayer;
+
 		var layerStComerciais;
 		var layerHidrantes;
 		var layerRedeAgua;
+		var layerBairros;
+		var layerMacros;
+		
 		var popupConteudoStComerciais;
 		var popupConteudoHidrantes;
 		var popupConteudoRedeAgua;
+		var popupBairros;
+		var popupMacros;
+
 		var printMap
 		//var paises = ["Alemanha", "Argentina", "Brasil", "França", "Itália"];
 
@@ -164,6 +176,18 @@
 				map.fitBounds(e.target.getBounds());
 			}
 
+			function onEachFeature_bai(feature, layerBairros){
+				popupBairros = "<b>Nome do bairro: </b>" +feature.properties.bai_nome;
+				layerBairros.bindPopup(popupBairros);
+				layerBairros.on({
+					click: zoomBairro
+				});
+			}
+
+			function zoomBairro(e){
+				map.fitBounds(e.target.getBounds());
+			}
+
 			/** ST COMERCIAIS */
 			stComerciaisLayer = L.geoJSON(setoresComerciais, {
 				style: function (feature) {
@@ -188,7 +212,7 @@
 				stComerciaisLayer.resetStyle(e.target);
 				
 			}
-
+			/******************/
 
 			/** REDES ÁGUA */
 			redeAguaLayer = L.geoJSON(rede_agua, {
@@ -222,6 +246,23 @@
 			}).addTo(map);
 			/*********************/
 
+			/** BAIRROS */
+			bairrosLayer = L.geoJSON(bairros, {
+				style: function(feature){
+					return {
+						color: "#500",
+						fillColor: "#009"
+					};
+				},
+				onEachFeature: onEachFeature_bai
+			}).addTo(map);
+			/*********************/
+
+			/** BMACROS */
+			macrosLayer = L.geoJSON(tramacro).addTo(map);
+			/*********************/
+
+
 			objBasemaps = {
 				"Mapa tradicional": camadaMapa
 			};
@@ -230,7 +271,9 @@
 			objSobrecamadas = {
 				'Setores Comerciais': stComerciaisLayer,
 				'Redes de Água': redeAguaLayer,
-				'Hidrantes': hidrantesLayer
+				'Hidrantes': hidrantesLayer,
+				'Bairros': bairrosLayer,
+				'Macro': macrosLayer
 			};
 
 
@@ -238,23 +281,14 @@
 
 
 			/* BUSCAR */
-			/*
-			$.each(setoresComerciais.features, function(key, value){
-				var option = "";
-				var option += '<option value="'+key+'">'+value.properties.sco_dsc_un+'</option>';
-
-				$("#unSearch").append(option);
-				
-				//console.log(key + " : " + value.properties.sco_dsc_un);
-			});*/
-
 
 			//Agrupa Unidades
-            console.log(setoresComerciais.features[0].properties)
+            //console.log(setoresComerciais.features[0].properties)
             var groupsUnidade = [];
             var uniqueUnidade = [];
 
 			//$('#unSearch').append('<option value="">Selecione</option>');
+            console.log(groupsUnidade)
             setoresComerciais.features.map(function(prop) {
                 groupsUnidade.push(prop.properties.sco_dsc_un);
             });
@@ -270,36 +304,36 @@
 
             //Get Localidades ao alterar
             $('#unSearch').on('change', function() {
-                    var value = $(this).find(':selected').val();
-                    var groupsLocalidade = [];
-                    var uniqueLocalidade = [];
+                var value = $(this).find(':selected').val();
+                var groupsLocalidade = [];
+                var uniqueLocalidade = [];
 
-                    setoresComerciais.features.filter(function(prop) {
-                        if (prop.properties.sco_dsc_un.toLowerCase().trim() === value.toLowerCase().trim()) {
-                            groupsLocalidade.push(prop.properties.sco_dsc_loc);
-                        }
+                setoresComerciais.features.filter(function(prop) {
+                    if (prop.properties.sco_dsc_un.toLowerCase().trim() === value.toLowerCase().trim()) {
+                        groupsLocalidade.push(prop.properties.sco_dsc_loc);
+                    }
 
-                    });
-                    console.log(groupsLocalidade)
-                    groupsLocalidade = Array.from(new Set(groupsLocalidade)); // [1,2,3,4,5]
-                    console.log('Unique: ' + groupsLocalidade)
-					
-					groupsLocalidade.sort(function(a, b){
-						return a-b;
-					});
-                    $('#locSearch').empty();
-					$('#numSearch').empty();
-					$('#locSearch').append('<option value="">Buscar por Localidade</option>');
-					$('#numSearch').append('<option value="">Buscar por Nº do Setor Comercial</option>');
-                    groupsLocalidade.map(function(prop) {
-
-                        $('#locSearch').append($('<option/>', {
-                            value: prop,
-                            text: prop
-                        }));
-                    });
-                })
-                //Get Comercial 
+                });
+                
+                console.log(groupsLocalidade)
+                groupsLocalidade = Array.from(new Set(groupsLocalidade)); // [1,2,3,4,5]
+                console.log('Unique: ' + groupsLocalidade)
+				
+				groupsLocalidade.sort(function(a, b){
+					return a-b;
+				});
+                $('#locSearch').empty();
+				$('#numSearch').empty();
+				$('#locSearch').append('<option value="">Buscar por Localidade</option>');
+				$('#numSearch').append('<option value="">Buscar por Nº do Setor Comercial</option>');
+                groupsLocalidade.map(function(prop) {
+                    $('#locSearch').append($('<option />', {
+                        value: prop,
+                        text: prop
+                    }));
+                });
+            });
+            //Get SetorComercial 
             $('#locSearch').on('change', function() {
                 var value = $(this).find(':selected').val();
                 var groupsSetoComercial = [];
@@ -309,106 +343,31 @@
                     if (prop.properties.sco_dsc_loc.toLowerCase().trim() === value.toLowerCase().trim()) {
                         groupsSetoComercial.push(prop.properties.sco_num_sc);
                     }
-
                 });
 
+                console.log(groupsSetoComercial)
+                groupsSetoComercial = Array.from(new Set(groupsSetoComercial)); // [1,2,3,4,5]
+                console.log('Unique: ' + groupsSetoComercial)
+
 				groupsSetoComercial.sort(function(a, b){
-						return a-b;
-					});
+					return a-b;
+				});
                 $('#numSearch').sort().empty();
 				$('#numSearch').append('<option value="">Buscar por Nº do Setor Comercial</option>');
                 groupsSetoComercial.map(function(prop) {
-
-                    $('#numSearch').append($('<option/>', {
+                    $('#numSearch').append($('<option />', {
                         value: prop,
                         text: prop
                     }));
                 });
-            })
+            });
+
+            $("#numSearch").on('change', function(){
+            	//map.fitBounds(e.target.getBounds());
+            });
 
 
-
-
-
-
-/*		
-			var propertyUn = [];
-			var propertyLoc = [];
-			var propertySt = [];
-			var groups = [];
-			var groupsLoc = [];
-			var groupsSt = [];
-			
-			$("#unSearch").html("<option>Buscar por Unidade</option>");
-			setoresComerciais.features.map(function(prop){
-				propertyUn.push(prop.properties.sco_dsc_un);
-			});
-			groups = Array.from(new Set(propertyUn));
-			groups.map(function(value){
-				$("#unSearch").append($('<option/>', {
-					value:value,
-					text:value
-				}));
-			});
-			
-
-				
-			$("#locSearch").html("<option>Buscar por Localidade</option>");
-			setoresComerciais.features.map(function(prop){
-				propertyLoc.push(prop.properties.sco_dsc_loc);
-			});
-			groupsLoc = Array.from(new Set(propertyLoc));
-			groupsLoc.map(function(value){
-				$("#locSearch").append($('<option/>', {
-					value:value,
-					text:value
-				}));
-			});		
-			
-
-
-			$("#stSearch").html("<option>Buscar por Nº de Setor Comercial</option>");
-			setoresComerciais.features.map(function(prop){
-				propertySt.push(prop.properties.sco_num_sc);
-			});
-			groupsSt = Array.from(new Set(propertySt));
-			groupsSt.map(function(value){
-				$("#stSearch").append($('<option/>', {
-					value:value,
-					text:value
-				}));
-			});
-
-*/
-
-			/*
-			function paises(setoresComerciais){
-				var option = '<option selected="selected" value="0">Buscar por Unidade</option>'
-				for(var i = 0; i < setoresComerciais.features.length; i++){
-					option += "<option value='"+setoresComerciais.features[i].properties.sco_cod_un+"'>"+setoresComerciais.features[i].properties.sco_dsc_un+"</option>";
-				}
-
-				$("#unSearch").html(option);
-			});*/
-
-			
-
-
-			
-/*
-			$("#stSearch").autocomplete({
-				source: setoresComerciais.features.map(function(d, i){
-					return { 
-						label: d.properties.sco_num_sc + " - " + d.properties.sco_dsc_loc,
-						id: i
-					}
-				}),
-				select: function(event, ui){
-					var featureLayer = L.geoJSON(setoresComerciais.features[ui.item.id]);
-					map.fitBounds(featureLayer.getBounds());				
-				} 
-			});
-*/
+/***************************************************/
 			$("#raSearch").autocomplete({
 				source: rede_agua.features.map(function(d, i){
 					return { 
