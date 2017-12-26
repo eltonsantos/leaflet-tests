@@ -79,7 +79,6 @@
 	<script src="js/geoHidrantes.js" type="text/javascript"></script>
 	<script src="js/geoBairros.js" type="text/javascript"></script>
 	<script src="js/geoMunicipios.js" type="text/javascript"></script>
-	<script src="js/geoMacro.js" type="text/javascript"></script>
 	<script src="js/geoSetoresComerciais.js" type="text/javascript"></script>
 	<script src="js/leaflet.browser.print.min.js"></script>
 
@@ -96,21 +95,18 @@
 		var hidrantesLayer;
 		var bairrosLayer;
 		var municipiosLayer;
-		var macrosLayer;
 
 		var layerStComerciais;
 		var layerHidrantes;
 		var layerRedeAgua;
 		var layerBairros;
 		var layerMunicipios;
-		var layerMacros;
 
 		var popupConteudoStComerciais;
 		var popupConteudoHidrantes;
 		var popupConteudoRedeAgua;
 		var popupBairros;
 		var popupMunicipios;
-		var popupMacros;
 
 		var printMap
 		//var paises = ["Alemanha", "Argentina", "Brasil", "França", "Itália"];
@@ -285,11 +281,7 @@
 				onEachFeature: onEachFeature_mun
 			}).addTo(map);
 			/*********************/
-
-			/** BMACROS */
-			macrosLayer = L.geoJSON(tramacro).addTo(map);
-			/*********************/
-
+			
 
 			objBasemaps = {
 				"Mapa tradicional": camadaMapa
@@ -301,8 +293,7 @@
 				'Redes de Água': redeAguaLayer,
 				'Hidrantes': hidrantesLayer,
 				'Bairros': bairrosLayer,
-				'Municípios': municipiosLayer,
-				'Macro': macrosLayer
+				'Municípios': municipiosLayer
 			};
 
 

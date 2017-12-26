@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Simple Sidebar - Start Bootstrap Template</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="css/leaflet.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="css/sidebar.css" rel="stylesheet">
+
+</head>
+
+<body>
+    
+    <div class="header">
+        <header>
+            <nav class="navbar navbar-fixed-top" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle sidebar-toggle collapsed pull-left" data-toggle="collapse" data-target="#navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar btn-inverse"></span>
+                            <span class="icon-bar btn-inverse"></span>
+                            <span class="icon-bar btn-inverse"></span>
+                        </button>
+                        <a href="#" class="navbar-brand">CAGECE</a>
+                        <h1 class="section-title">Buscar...</h1>
+                        <form class="navbar-form pull-left" id="main-form">
+                            <div class="form-group">
+                              <div class="input-group">
+                                <input type="text" placeholder="Buscar por Lugares" class="form-control" id="main-form-input" autocomplete="off">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-inverse">
+                                        <span class="glyphicon glyphicon-search white"></span>
+                                    </button>
+                                </span>
+                              </div>
+                            </div>
+                        </form>
+                        <button type="button" class="navbar-toggle sidebar-toggle collapsed pull-right">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="glyphicon glyphicon-menu-left"></span>
+                        </button>                    
+                    </div>
+                </div>
+            </nav>
+        </header>
+    </div>
+   
+
+    <div class="mainContainer">
+         <div id="sidebar-wrapper-fixed">
+            <ul class="sidebar-nav-fixed"> 
+                <li>
+                    <a href="#">
+                        <i class="icon glyphicon glyphicon-stats"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="icon glyphicon glyphicon-print"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="icon glyphicon glyphicon-info-sign"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div id="wrapper">
+     
+            <!-- Sidebar -->
+            <div id="sidebar-wrapper" class="painelLateral">
+                <ul class="sidebar-nav">
+                    <li class="sidebar-brand">
+                        <a href="#">
+                            Start Bootstrap
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">Dashboard</a>
+                    </li>
+                    <li>
+                        <a href="#">Shortcuts</a>
+                    </li>
+                    <li>
+                        <a href="#">Overview</a>
+                    </li>
+                    <li>
+                        <a href="#">Events</a>
+                    </li>
+                    <li>
+                        <a href="#">About</a>
+                    </li>
+                    <li>
+                        <a href="#">Services</a>
+                    </li>
+                    <li>
+                        <a href="#">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /#sidebar-wrapper -->
+
+            <a href="#" class="toggles"><i class="glyphicon glyphicon-white glyphicon-chevron-left"></i></a>
+
+            <!-- Page Content -->
+            <div id="page-content-wrapper">
+                   <div id="map"></div>
+            </div>
+            <!-- /#page-content-wrapper -->
+
+        </div>
+        <!-- /#wrapper -->        
+    </div>
+
+
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/leaflet.js"></script>
+    <script src="js/geoBairros.js"></script>
+    <script type="text/javascript" src="js/script.js"></script>
+    <!-- Menu Toggle Script -->
+    <script>
+    $(".toggles").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
+
+    $(".navbar-toggle").click(function(e){
+        //e.preventDefault();
+        $("#sidebar-wrapper-fixed").toggleClass("open");
+    });
+    </script>
+
+</body>
+
+</html>
