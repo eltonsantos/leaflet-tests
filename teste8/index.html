@@ -45,6 +45,7 @@
         var value = $(this).find(':selected').val();
         var boundArea = parseInt(value);    
         map.fitBounds(boundaryLayer._layers[leafletIdJsonProperty[boundArea]]._bounds);
+    
     });
      
      
@@ -79,8 +80,7 @@
         zoom: 8,
         layers: [osm]
     });
-     
-     
+      
   </script>
  
 </body>

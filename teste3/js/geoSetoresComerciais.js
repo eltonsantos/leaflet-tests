@@ -1,4 +1,4 @@
-setoresComerciais={
+{
   "type": "FeatureCollection",
   "totalFeatures": 116,
   "features": [
