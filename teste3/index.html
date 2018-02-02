@@ -111,7 +111,6 @@
 		var printMap
 		//var paises = ["Alemanha", "Argentina", "Brasil", "França", "Itália"];
 
-
 		$(function(){
 			map = L.map('map', {
 				center: [-3.794, -38.545],
@@ -388,15 +387,29 @@
 
 	});
 
+	var leafletIdJsonProperty = {}
+
+	function MatchJSONProperty(jsonData, leafletLayer) {
+	    for (feature in leafletLayer._layers) {
+	        //A JS Object consisting of GeoJSON ID, Leaflet Layer ID
+	        leafletIdJsonProperty[leafletLayer._layers[feature].feature.properties.id] = parseInt(feature)
+	    }
+	}
 
 	$("#numSearch").on('change', function(e) {
 
 		var value = $(this).find(':selected').val();
-		var boundArea = e.target.value;
+		var boundArea = parseInt(value);
+		map.fitBounds(stComerciaisLayer._layers[leafletIdJsonProperty[boundArea]]._bounds);
+
+		//var xxxLayer = L.geoJSON(stComerciaisLayer.features.sco_num_sc.xxxLayer);
+		//map.fitBounds(xxxLayer.getBounds());
+		
+		//console.log(stComerciaisLayer.features["properties"]["sco_num_sc"][boundArea]);
 		
 		//map.fitBounds(boundArea.getBounds());
-		alert(value);
-		alert(boundArea);
+		//alert(typeof(value));
+		//alert(typeof(boundArea));
 
 	});
 
