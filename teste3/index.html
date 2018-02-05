@@ -389,13 +389,6 @@
 
 	var leafletIdJsonProperty = {}
 
-	function MatchJSONProperty(jsonData, leafletLayer) {
-	    for (feature in leafletLayer._layers) {
-	        //A JS Object consisting of GeoJSON ID, Leaflet Layer ID
-	        leafletIdJsonProperty[leafletLayer._layers[feature].feature.properties.id] = parseInt(feature)
-	    }
-	}
-
 	$("#numSearch").on('change', function(e) {
 
 		var value = $(this).find(':selected').val();
@@ -412,6 +405,15 @@
 		//alert(typeof(boundArea));
 
 	});
+
+	function MatchJSONProperty(jsonData, leafletLayer) {
+	    for (feature in leafletLayer._layers) {
+	        //A JS Object consisting of GeoJSON ID, Leaflet Layer ID
+	        leafletIdJsonProperty[leafletLayer._layers[feature].feature.properties.sco_num_sc] = parseInt(feature)
+	    }
+	}
+
+	MatchJSONProperty(setoresComerciais, stComerciaisLayer)
 
 /***************************************************/
 			$("#raSearch").autocomplete({
