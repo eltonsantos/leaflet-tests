@@ -70,14 +70,25 @@
 
       hidrantesLayer = L.geoJSON(hidrantes, {
         pointToLayer: function(feature, latlng){
-          console.log(feature, latlng);
           return L.marker(latlng, {
             icon: hidranteIcon
           });
         }
       });
 
-      vazamentosLayer = L.geoJSON(vazamentos);
+      var vazamentoIcon = new L.Icon({
+        iconUrl: 'vazamento.png',
+        iconSize: [36, 38]
+      });
+
+      vazamentosLayer = L.geoJSON(vazamentos, {
+        pointToLayer: function(feature, latlng){
+          return L.marker(latlng, {
+            icon: vazamentoIcon
+          });
+        }
+      });
+
       stComerciaisLayer = L.geoJSON(setoresComerciais);
 
 
