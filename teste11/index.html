@@ -89,7 +89,41 @@
 
       camadasControle = L.control.layers(objBasemaps, objCamadas).addTo(map);
 
-      
+      map.on('zoomend', function() {
+          if (map.getZoom() < 12){
+              if (map.hasLayer(stComerciaisLayer)) {
+                  map.removeLayer(stComerciaisLayer);
+                  console.log("no setoresComerciais layer active");
+              } else {
+                  console.log("no setoresComerciais layer active");
+              }
+          }
+          if (map.getZoom() >= 12){
+              if (map.hasLayer(stComerciaisLayer)){
+                  console.log("layer setoresComerciais already added");
+              } else {
+                  map.addLayer(stComerciaisLayer);
+                  console.log("layer setoresComerciais already added");
+              }
+          }
+
+          if (map.getZoom() < 15){
+              if (map.hasLayer(quadrasLayer)) {
+                  map.removeLayer(quadrasLayer);
+                  console.log("no quadras layer active");
+              } else {
+                  console.log("no quadras layer active");
+              }
+          }
+          if (map.getZoom() >= 15){
+              if (map.hasLayer(quadrasLayer)){
+                  console.log("layer quadras already added");
+              } else {
+                  map.addLayer(quadrasLayer);
+                  console.log("layer quadras already added");
+              }
+          }
+      });
 /*
       onMoveend(e) {
         let bounds = e.target.getBounds();
