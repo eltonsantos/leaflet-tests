@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>Leaflet</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+        integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin="" />
+
+      <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+        crossorigin=""></script>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+     
+      <style>
+        html, body, #map {
+          height: 100%;
+        }
+      </style>
+  </head>
+   
+   
+  <body onload="init()">
+
+    <div id="map"></div> <!-- Must have 'height' in style argument -->
+
+    <script>
+      
+      function init(){
+        
+        var map = L.map("map").setView([51.73, -1.28], 12);
+        
+        var osmLink = "<a href='http://www.openstreetmap.org'>Open StreetMap</a>";
+
+        attrLink = "Map tiles by <a href='http://stamen.com'>Stamen Design</a>, under <a href='http://creativecommons.org/licences/by/3.0'>CC BY 3.0</a>. Data by <a href='http://www.openstreetmap.org'>Open StreetMap</a>, under <a href='http://creativecommons.org/licences/by-sa/3.0'>CC BY SA</a>";
+
+        attrLinkToner = "Map tiles by <a href='http://stamen.com'>Stamen Design</a>, under <a href='http://creativecommons.org/licences/by/3.0'>CC BY 3.0</a>. Data by <a href='http://www.openstreetmap.org'>Open StreetMap</a>, under <a href='http://www.openstreetmap.org/copyright'>ODbL</a>.";
+
+        var openMap = L.tileLayer(
+          "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: osmLink,
+            maxZoom: 18
+        }).addTo(map);
+
+        var terrainMap = L.tileLayer(
+          "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg", {
+            attribution: attrLink,
+            maxZoom: 18
+        }).addTo(map);
+
+        var tonerMap = L.tileLayer(
+          "http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png", {
+          attribution: attrLinkToner,
+          maxZoom: 18
+        }).addTo(map);
+
+        var watercolorMap = L.tileLayer(
+          "http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg", {
+            attribution: attrLink,
+            maxZoom: 18
+        }).addTo(map);
+
+        var baseLayers = {
+          "Stamen Terrain": terrainMap,
+          "Stamen Toner": tonerMap,
+          "Stamen Watercolor" : watercolorMap,
+          "OpenStreetmap": openMap
+        };
+
+        L.control.layers(baseLayers).addTo(map);
+
+        var pubLatLng = L.latLng(51.757230, -1.260269);
+        var pubIcon = L.icon({
+          iconUrl: "beer.png",
+          iconSize: [50,50]
+        });
+        var pubMarker = L.marker(pubLatLng, {
+          icon: pubIcon,
+          title: "The Eagle and Child: JRR Tolkien and CS Lewis supped beer here",
+          alt: "The Eagle and Child public house"
+        }).addTo(map);
+
+        var walkLine = L.polyline([
+            [51.757276, -1.260129],
+            [51.756831, -1.260054],
+            [51.756154, -1.259700],
+            [51.756074, -1.259453],
+            [51.755636, -1.259346]
+          ], {
+            color: "red",
+            weight: 8
+        }).addTo(map);
+
+        var buildingPoly = L.polygon([
+            [51.756633, -1.258688],
+            [51.756416, -1.258618],
+            [51.756454, -1.258323],
+            [51.756592, -1.258443],
+            [51.756663, -1.258473]
+          ], {
+            color: "blue",
+            weight: 5,
+            fillColor: "red",
+            fillOpacity: 0.5
+        }).addTo(map);
+
+        var parkRectangle = L.rectangle([
+            [51.761539, -1.258820],
+            [51.760995, -1.256974]
+          ], {
+            color: "red",
+            weight: 5,
+            fillColor: "blue"
+        }).addTo(map);
+
+        var areaCircle = L.circle(
+          [51.759806, -1.264173],
+          100,
+          {
+            color: "red",
+            weight: 5,
+            fillColor: "green"
+          }
+        ).addTo(map);
+      
+      }
+
+    </script>
+   
+  </body>
+
+</html>
