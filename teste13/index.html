@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>Leaflet</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+        integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin="" />
+
+      <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+        crossorigin=""></script>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+      <script src="L.TileLayer.BetterWMS.js"></script>
+     
+      <style>
+        html, body, #map {
+          height: 100%;
+        }
+      </style>
+  </head>
+   
+   
+  <body onload="init()">
+
+    <div id="map"></div> <!-- Must have 'height' in style argument -->
+
+    <script>
+      
+      function init(){
+        
+        var map = L.map("map").setView([-5.321, -39.367], 8);
+        
+        var osmLink = "<a href='http://www.openstreetmap.org'>Open StreetMap</a>";
+
+        attrLink = "Map tiles by <a href='http://stamen.com'>Stamen Design</a>, under <a href='http://creativecommons.org/licences/by/3.0'>CC BY 3.0</a>. Data by <a href='http://www.openstreetmap.org'>Open StreetMap</a>, under <a href='http://creativecommons.org/licences/by-sa/3.0'>CC BY SA</a>";
+
+        attrLinkToner = "Map tiles by <a href='http://stamen.com'>Stamen Design</a>, under <a href='http://creativecommons.org/licences/by/3.0'>CC BY 3.0</a>. Data by <a href='http://www.openstreetmap.org'>Open StreetMap</a>, under <a href='http://www.openstreetmap.org/copyright'>ODbL</a>.";
+
+        var openMap = L.tileLayer(
+          "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: osmLink,
+            maxZoom: 18
+        }).addTo(map);
+
+        var terrainMap = L.tileLayer(
+          "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg", {
+            attribution: attrLink,
+            maxZoom: 18
+        }).addTo(map);
+
+        var tonerMap = L.tileLayer(
+          "http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png", {
+          attribution: attrLinkToner,
+          maxZoom: 18
+        }).addTo(map);
+
+        var watercolorMap = L.tileLayer(
+          "http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg", {
+            attribution: attrLink,
+            maxZoom: 18
+        }).addTo(map);
+
+
+        var stComerciaisLayer= L.tileLayer.betterWms("http://172.25.131.53:8080/geoserver/wms/", {
+          layers: 'IGEO:setor_comercial_geo',
+          format: 'image/png',
+          transparent: true,
+          attribution: "Algum texto de teste"
+        });
+      
+
+        var quadrasLayer = L.tileLayer.betterWms("http://172.25.131.53:8080/geoserver/wms/", {
+          layers: 'IGEO:quadras_mapeadas',
+          format: 'image/png',
+          transparent: true,
+          attribution: "Algum texto de teste"
+        });
+
+
+
+
+
+
+        
+
+
+        var baseLayers = {
+          "Stamen Terrain": terrainMap,
+          "Stamen Toner": tonerMap,
+          "Stamen Watercolor" : watercolorMap,
+          "OpenStreetmap": openMap
+        };
+
+        var objCamadas = {
+          "Setores Comerciais": stComerciaisLayer,
+          "Quadras": quadrasLayer
+        }
+
+        L.control.layers(baseLayers, objCamadas).addTo(map);
+
+              
+      }
+
+    </script>
+   
+  </body>
+
+</html>
