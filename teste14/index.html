@@ -7,12 +7,11 @@
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
         integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin="" />
 
-      <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
-        crossorigin=""></script>
-
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-      <script src="L.TileLayer.BetterWMS.js"></script>
+      <!--<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>-->
+      <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+        crossorigin=""></script>
 
       <style>
         html, body, #map {
@@ -63,21 +62,46 @@
         }).addTo(map);
 
 
-        var stComerciaisLayer= L.tileLayer.betterWms("http://172.25.131.53:8080/geoserver/wms/", {
-          layers: 'IGEO:setor_comercial_geo',
-          format: 'image/png',
-          transparent: true,
-          attribution: "Algum texto de teste"
-        });
-      
+        var stComerciaisLayer = {
+            service: 'WFS',
+            version: '1.0.0',
+            request: 'GetFeature',
+            typeName: 'IGEO:setor_comercial_geo',
+            outputFormat: 'text/javascript',
+            format_options: 'callback: getJson',
+            srsName:'EPSG:4326'
+        };
 
-        var quadrasLayer = L.tileLayer.betterWms("http://172.25.131.53:8080/geoserver/wms/", {
-          layers: 'IGEO:quadras_mapeadas',
-          format: 'image/png',
-          transparent: true,
-          attribution: "Algum texto de teste"
+        var parameters = L.Util.extend(stComerciaisLayer);
+        $.ajax({
+            jsonp : false,
+            url: "http://172.25.131.53:8080/geoserver/ows" + L.Util.getParamString(parameters),
+            dataType: 'jsonp',
+            jsonpCallback: 'getJson',
+            success: handleJson
         });
 
+        var group = new L.featureGroup().addTo(map);
+
+        function handleJson(data) {
+            var geojsonlayer = L.geoJson(data, {
+                style: function(feature) {
+                        return { opacity: 1,
+                        color: 'rgba(0,0,0,1.0)',
+                        dashArray: '',
+                        lineCap: 'butt',
+                        lineJoin: 'miter',
+                        weight: 1.0, 
+                        fill: true,
+                        fillOpacity: 0.9,
+                        fillColor: 'rgba(0,255,0,0.3)'};
+                },
+                onEachFeature: function (feature, layer) {
+                            popupOptions = {maxWidth: 200};
+                            layer.bindPopup("Setor: " + feature.properties.set_num_setor + "<br>Unidade: " + feature.properties.uad_sgl_unidade_administrativa + "<br>Localidade: " +feature.properties.lge_nom_local_geografico, popupOptions);
+                }
+            }).addTo(group);
+        }
 
         var baseLayers = {
           "Stamen Terrain": terrainMap,
@@ -87,12 +111,10 @@
         };
 
         var objCamadas = {
-          "Setores Comerciais": stComerciaisLayer,
-          "Quadras": quadrasLayer
+          "Setores Comerciais": stComerciaisLayer
         }
 
         L.control.layers(baseLayers, objCamadas).addTo(map);
-
               
       }
 

@@ -1,139 +1,94 @@
 <!DOCTYPE html>
 <html>
-  <head>
-      <title>Leaflet</title>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
-        integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ==" crossorigin="" />
+ <head>
+   <meta charset="UTF-8"/>
+   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+   <title>Geoserver</title>
+   <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+   </style>
+   <!--Lib-->
+   <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css"/>
+   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+   <script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
 
-      <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js" integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
-        crossorigin=""></script>
-
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-     
-      <style>
-          #map {
-            width: 950px;
-            height: 700px;
-          }
-      </style>
-  </head>
-   
-   
-  <body>
-   
-    <b>Nível do zoom:</b> <span id="zoom-level"></span>
-
-    <div id="map"></div> <!-- Must have 'height' in style argument -->
-
-    <script>
-
-      var map;
-      
-      var camadaMapa;
-      var objBasemaps;
-      var objCamadas;
-      var stComerciaisLayer;
-      var quadrasLayer;
-      var camadasControle;
-
-      map = L.map("map", {
-        center: [-3.794, -38.545],
-        zoom: 12
-      });
-
-      map.on('zoomend', function(){
-        $('#zoom-level').html(map.getZoom());
-      });
-
-      camadaMapa = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-        maxZoom: 18,
-        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-        '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-        'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-        id: 'mapbox.light'
-      }).addTo(map);
+   <div id="map"></div>
+   </head>
 
 
-      
-      stComerciaisLayer= L.tileLayer.wms("http://172.25.131.53:8080/geoserver/wms/", {
-        layers: 'IGEO:setor_comercial_geo',
-        format: 'image/png',
-        transparent: true,
-        attribution: "Algum texto de teste"
-      }).addTo(map);
-      
+ <body>
+ <script >
+  var m= L.map('map').setView([-3.766625, -38.532143], 11);
 
-      quadrasLayer = L.tileLayer.wms("http://172.25.131.53:8080/geoserver/wms/", {
-        layers: 'IGEO:quadras_mapeadas',
-        format: 'image/png',
-        transparent: true,
-        attribution: "Algum texto de teste"
-      });
+var mapQuestAttr = 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; ';
+var osmDataAttr = 'Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+var mopt = {
+    url: 'http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.jpeg',
+    options: {attribution:mapQuestAttr + osmDataAttr, subdomains:'1234'}
+  };
+var osm = L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:osmDataAttr});
+var mq=L.tileLayer(mopt.url,mopt.options);
 
+osm.addTo(m);
 
 
+var rootUrl = 'http://172.25.131.53:8080/geoserver/ows';
+
+var defaultParameters = {
+    service: 'WFS',
+    version: '1.0.0',
+    request: 'GetFeature',
+    typeName: 'IGEO:setor_comercial_geo',
+    outputFormat: 'text/javascript',
+    format_options: 'callback: getJson',
+    srsName:'EPSG:4326'
+
+};
+
+var parameters = L.Util.extend(defaultParameters);
+//console.log(rootUrl + L.Util.getParamString(parameters));
+$.ajax({
+    jsonp : false,
+    url: rootUrl + L.Util.getParamString(parameters),
+    dataType: 'jsonp',
+    jsonpCallback: 'getJson',
+    success: handleJson
+
+});
 
 
-      objBasemaps = {
-        "Mapa tradicional": camadaMapa
-      };
+var group = new L.featureGroup().addTo(m);
+var geojsonlayer;
+function handleJson(data) {
+    geojsonlayer=L.geoJson(data, {
+        style: function(feature) {
+                return { opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 0.5,
+                fillColor: 'rgba(0,255,0,0.3)'};
+        },
+		 onEachFeature: function (feature, layer) {
+                popupOptions = {maxWidth: 200};
+                layer.bindPopup("Setor: "+feature.properties.set_num_setor+
+				"<br>Unidade: "+feature.properties.uad_sgl_unidade_administrativa+"<br>Localidade: "+feature.properties.lge_nom_local_geografico
+                         , popupOptions);
+            }
+    }).addTo(group);
+}
 
 
-      objCamadas = {
-        "Setores Comerciais" : stComerciaisLayer,
-        "Quadras" : quadrasLayer
-      };
+</script>   
 
-
-      camadasControle = L.control.layers(objBasemaps, objCamadas).addTo(map);
-
-      map.on('zoomend', function() {
-          if (map.getZoom() < 12){
-              if (map.hasLayer(stComerciaisLayer)) {
-                  map.removeLayer(stComerciaisLayer);
-                  console.log("no setoresComerciais layer active");
-              } else {
-                  console.log("no setoresComerciais layer active");
-              }
-          }
-          if (map.getZoom() >= 12){
-              if (map.hasLayer(stComerciaisLayer)){
-                  console.log("layer setoresComerciais already added");
-              } else {
-                  map.addLayer(stComerciaisLayer);
-                  console.log("layer setoresComerciais already added");
-              }
-          }
-
-          if (map.getZoom() < 15){
-              if (map.hasLayer(quadrasLayer)) {
-                  map.removeLayer(quadrasLayer);
-                  console.log("no quadras layer active");
-              } else {
-                  console.log("no quadras layer active");
-              }
-          }
-          if (map.getZoom() >= 15){
-              if (map.hasLayer(quadrasLayer)){
-                  console.log("layer quadras already added");
-              } else {
-                  map.addLayer(quadrasLayer);
-                  console.log("layer quadras already added");
-              }
-          }
-      });
-/*
-      onMoveend(e) {
-        let bounds = e.target.getBounds();
-        let markers = this.get('markers');
-        //filter markers array
-      }
-*/
-
-    </script>
-   
-  </body>
+ </body>
 
 </html>
