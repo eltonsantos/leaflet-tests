@@ -43,25 +43,50 @@
             maxZoom: 18
         }).addTo(map);
 
-        var terrainMap = L.tileLayer(
-          "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg", {
-            attribution: attrLink,
-            maxZoom: 18
-        }).addTo(map);
+/* QUADRAS */
 
-        var tonerMap = L.tileLayer(
-          "http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png", {
-          attribution: attrLinkToner,
-          maxZoom: 18
-        }).addTo(map);
+        var quadrasLayer = {
+            service: 'WFS',
+            version: '1.0.0',
+            request: 'GetFeature',
+            typeName: 'IGEO:quadras_mapeadas',
+            outputFormat: 'text/javascript',
+            format_options: 'callback: getJson',
+            srsName:'EPSG:4326'
+        };
 
-        var watercolorMap = L.tileLayer(
-          "http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg", {
-            attribution: attrLink,
-            maxZoom: 18
-        }).addTo(map);
+        var parameters = L.Util.extend(quadrasLayer);
+        $.ajax({
+            jsonp : false,
+            url: "http://172.25.131.53:8080/geoserver/ows" + L.Util.getParamString(parameters),
+            dataType: 'jsonp',
+            jsonpCallback: 'getJson',
+            success: handleJson
+        });
 
+        var group = new L.featureGroup().addTo(map);
 
+        function handleJson(data) {
+            var geojsonlayer = L.geoJson(data, {
+                style: function(feature) {
+                        return { opacity: 1,
+                        color: 'rgba(0,0,0,1.0)',
+                        dashArray: '',
+                        lineCap: 'butt',
+                        lineJoin: 'miter',
+                        weight: 1.0, 
+                        fill: true,
+                        fillOpacity: 0.9,
+                        fillColor: 'rgba(0,255,0,0.3)'};
+                },
+                onEachFeature: function (feature, layer) {
+                            popupOptions = {maxWidth: 200};
+                            layer.bindPopup("Número da quadra: " + feature.properties.numero_quadra + "<br>Unidade: " + feature.properties.unidade_negocio + "<br>Setor de abastecimento: " +feature.properties.setor_abastecimento, popupOptions);
+                }
+            }).addTo(group);
+        }
+
+/* SETOR COMERCIAL */
         var stComerciaisLayer = {
             service: 'WFS',
             version: '1.0.0',
@@ -98,20 +123,19 @@
                 },
                 onEachFeature: function (feature, layer) {
                             popupOptions = {maxWidth: 200};
-                            layer.bindPopup("Setor: " + feature.properties.set_num_setor + "<br>Unidade: " + feature.properties.uad_sgl_unidade_administrativa + "<br>Localidade: " +feature.properties.lge_nom_local_geografico, popupOptions);
+                            layer.bindPopup("Número do setor: " + feature.properties.set_num_setor + "<br>Unidade: " + feature.properties.uad_sgl_unidade_administrativa + "<br>Localidade: " +feature.properties.lge_nom_local_geografico, popupOptions);
                 }
             }).addTo(group);
         }
 
+/* CAMADAS */
         var baseLayers = {
-          "Stamen Terrain": terrainMap,
-          "Stamen Toner": tonerMap,
-          "Stamen Watercolor" : watercolorMap,
           "OpenStreetmap": openMap
         };
 
         var objCamadas = {
-          "Setores Comerciais": stComerciaisLayer
+          "Setor Comerical": stComerciaisLayer,
+          "Quadras": quadrasLayer
         }
 
         L.control.layers(baseLayers, objCamadas).addTo(map);
